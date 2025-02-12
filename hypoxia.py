@@ -47,10 +47,14 @@ def main():
         print('Wrong --verbosity argument.')
         sys.exit()
 
+    if not os.path.isdir(args.search_path):
+        print('Wrong --search-path argument.')
+        sys.exit()
+
     if args.keep_metadata == 'yes':
         keep_metadata = True
     elif args.keep_metadata == 'no':
-        keep_metadata = True
+        keep_metadata = False
     else:
         print('Wrong --keep-metadata argument.')
         sys.exit()
@@ -68,7 +72,7 @@ def main():
     if preparation_result:
         if verbosity:
             print('Setting up task id: ' + task_id)
-        copy_result = copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
+        copy_result = hypoxia_copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
 
     if verbosity:
         print('Hypoxia finished work. Bye!')
