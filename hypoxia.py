@@ -50,7 +50,7 @@ def main():
     if args.keep_metadata == 'yes':
         keep_metadata = True
     elif args.keep_metadata == 'no':
-        keep_metadata = True
+        keep_metadata = False
     else:
         print('Wrong --keep-metadata argument.')
         sys.exit()
