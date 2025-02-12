@@ -47,6 +47,10 @@ def main():
         print('Wrong --verbosity argument.')
         sys.exit()
 
+    if not os.path.isdir(args.search_path):
+        print('Wrong --search-path argument.')
+        sys.exit()
+
     if args.keep_metadata == 'yes':
         keep_metadata = True
     elif args.keep_metadata == 'no':
