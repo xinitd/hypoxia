@@ -8,8 +8,9 @@
     <a href="#settings">Settings</a>
   </p>
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
-  <img alt="GitHub License" src="https://img.shields.io/github/license/xinitd/hypoxia">
+  <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xinitd/hypoxia">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/xinitd/hypoxia">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/xinitd/hypoxia">
 </div>
 
 <div align="center">
