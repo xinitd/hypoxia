@@ -20,7 +20,7 @@ def prepare_workspace(task_id, file_extensions, verbosity):
     return True
 
 
-def copy(task_id, file_extensions, verbosity, keep_metadata, search_path):
+def hypoxia_copy(task_id, file_extensions, verbosity, keep_metadata, search_path):
     if verbosity:
         print('Started search at ' + search_path)
 

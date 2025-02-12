@@ -68,7 +68,7 @@ def main():
     if preparation_result:
         if verbosity:
             print('Setting up task id: ' + task_id)
-        copy_result = copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
+        copy_result = hypoxia_copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
 
     if verbosity:
         print('Hypoxia finished work. Bye!')
