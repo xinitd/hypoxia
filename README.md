@@ -1,6 +1,5 @@
 <div align="center">
   <h2>HYPOXIA</h2>
-
   <p>
     <a href="#about">About</a>
     ·
@@ -8,6 +7,9 @@
     ·
     <a href="#settings">Settings</a>
   </p>
+  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/xinitd/hypoxia">
+  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/xinitd/hypoxia">
 </div>
 
 <div align="center">
