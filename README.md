@@ -60,20 +60,18 @@ Requirements:
 
 ```
 user@localhost:~$ ./hypoxia --help
-usage: hypoxia [-h] -v VERBOSITY -s SEARCH_PATH -e EXTENSIONS [-m KEEP_METADATA]
-
-Hi! I am Hypoxia - forensic tool. I may help you in file searching
+Hypoxia. Every byte will be found.
 
 options:
   -h, --help            show this help message and exit
-  -v VERBOSITY, --verbosity VERBOSITY
-                        Set verbosity level for view additional information while program working: silent - no any prints in terminal, info - print every action
+  -v {silent,info}, --verbosity {silent,info}
+                        Set verbosity level for display additional information in runtime: "silent" - no any prints in terminal, "info" - print every action.
   -s SEARCH_PATH, --search-path SEARCH_PATH
-                        Set searching path
+                        Setting up searching path. The absolute or relative path to the directory to search in.
   -e EXTENSIONS, --extensions EXTENSIONS
-                        Set file extensions for search
-  -m KEEP_METADATA, --keep-metadata KEEP_METADATA
-                        Metadata saving mode for collected files: no - copy files without metadata (faster), yes - attempts to keep all metadata
+                        File extensions to search for, separated by commas (e.g., "pdf,docx,txt").
+  -m {yes,no}, --keep-metadata {yes,no}
+                        Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).
 ```
 
 #### Settings:
