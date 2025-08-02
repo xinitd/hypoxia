@@ -1,20 +1,19 @@
-import os
-import glob
 import shutil
+from pathlib import Path
 
 
-WORKSPACE = os.getcwd()
+WORKSPACE = Path.cwd()
 workdir = 'data'
 
 
 def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
         print('Preparing environment. Please wait...')
-    os.makedirs(WORKSPACE + '/' + workdir, exist_ok=True)
-    os.makedirs(WORKSPACE + '/' + workdir + '/' + task_id, exist_ok=True)
+    (WORKSPACE / workdir).mkdir(exist_ok=True)
+    (WORKSPACE / workdir / task_id).mkdir(exist_ok=True)
 
     for file_extension in file_extensions:
-        os.makedirs(WORKSPACE + '/' + workdir + '/' + task_id + '/' + file_extension)
+        (WORKSPACE / workdir / task_id / file_extension).mkdir(exist_ok=True)
     if verbosity:
         print('Environment ready.')
     return True
@@ -22,27 +21,29 @@ def prepare_workspace(task_id, file_extensions, verbosity):
 
 def hypoxia_copy(task_id, file_extensions, verbosity, keep_metadata, search_path):
     if verbosity:
-        print('Started search at ' + search_path)
+        print(f'Started search at {search_path}')
+
+    copy_function = shutil.copy2 if keep_metadata else shutil.copy
+
+    search_path_obj = Path(search_path)
 
     for file_extension in file_extensions:
-        files = glob.glob(search_path + '/**/*.{}'.format(file_extension), recursive=True)
-        for file in files:
-            if keep_metadata:
-                try:
-                    if verbosity:
-                        print('Copying: ' + file)
-                    shutil.copy2(file, WORKSPACE + '/' + workdir + '/' + task_id + '/' + file_extension + '/' + os.path.basename(file), follow_symlinks=True)
-                except Exception as e:
-                    if verbosity:
-                        print('Something went wrong.')
-            else:
-                try:
-                    if verbosity:
-                        print('Copying: ' + file)
-                    shutil.copy(file, WORKSPACE + '/' + workdir + '/' + task_id + '/' + file_extension + '/' + os.path.basename(file), follow_symlinks=True)
-                except Exception as e:
-                    if verbosity:
-                        print('Something went wrong.')
+        files_to_copy = search_path_obj.rglob(f'*.{file_extension}')
+
+        for source_file in files_to_copy:
+            try:
+                if verbosity:
+                    print(f'Copying: {source_file}')
+
+                destination_file = WORKSPACE / workdir / task_id / file_extension / source_file.name
+
+                copy_function(source_file, destination_file)
+
+            except (IOError, OSError) as e:
+                if verbosity:
+                    print(f'Error copying file {source_file}: {e}')
+
     if verbosity:
         print('Copying done.')
+
     return True
