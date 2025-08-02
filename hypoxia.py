@@ -4,60 +4,52 @@
 import argparse
 import sys
 import uuid
-
+from pathlib import Path
 from utils import *
+
+
+def dir_path(path_string):
+    path_obj = Path(path_string)
+    if path_obj.is_dir():
+        return path_obj
+    else:
+        raise argparse.ArgumentTypeError(f'"{path_string}" is not a valid directory.')
 
 
 def main():
     task_id = str(uuid.uuid4())
 
-    parser = argparse.ArgumentParser(description='Hi! I am Hypoxia - forensic tool. I may help you in file searching')
+    parser = argparse.ArgumentParser(description='Hypoxia. Every byte will be found.')
 
     parser.add_argument(
-        '-v', '--verbosity', type=str, required=True,
-        help='Set verbosity level for view additional information while program working: silent - no any prints in terminal, info - print every action'
+        '-v', '--verbosity',
+        choices=['silent', 'info'],
+        required=True,
+        help='Set verbosity level for display additional information in runtime: "silent" - no any prints in terminal, "info" - print every action.'
     )
-
     parser.add_argument(
-        '-s', '--search-path', type=str, required=True,
-        help='Set searching path'
+        '-s', '--search-path',
+        type=dir_path,
+        required=True,
+        help='Setting up searching path. The absolute or relative path to the directory to search in.'
     )
-
     parser.add_argument(
-        '-e', '--extensions', type=str, required=True,
-        help='Set file extensions for search'
+        '-e', '--extensions',
+        type=str,
+        required=True,
+        help='File extensions to search for, separated by commas (e.g., "pdf,docx,txt").'
     )
-
     parser.add_argument(
-        '-m', '--keep-metadata', default='no', type=str,
-        help='Metadata saving mode for collected files: no - copy files without metadata (faster), yes - attempts to keep all metadata'
+        '-m', '--keep-metadata',
+        choices=['yes', 'no'],
+        default='no',
+        help='Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).'
     )
 
     args = parser.parse_args()
 
-    target_extensions = None
-    verbosity = None
-    keep_metadata = None
-
-    if args.verbosity == 'silent':
-        verbosity = False
-    elif args.verbosity == 'info':
-        verbosity = True
-    else:
-        print('Wrong --verbosity argument.')
-        sys.exit()
-
-    if not os.path.isdir(args.search_path):
-        print('Wrong --search-path argument.')
-        sys.exit()
-
-    if args.keep_metadata == 'yes':
-        keep_metadata = True
-    elif args.keep_metadata == 'no':
-        keep_metadata = False
-    else:
-        print('Wrong --keep-metadata argument.')
-        sys.exit()
+    verbosity = (args.verbosity == 'info')
+    keep_metadata = (args.keep_metadata == 'yes')
 
     try:
         target_extensions = args.extensions.split(',')
@@ -67,11 +59,10 @@ def main():
 
     if verbosity:
         print('Starting Hypoxia...')
+        print(f'Setting up task: {task_id}')
 
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
-        if verbosity:
-            print('Setting up task id: ' + task_id)
         copy_result = hypoxia_copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
 
     if verbosity:
