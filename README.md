@@ -1,4 +1,7 @@
 <div align="center">
+
+  <img src="assets/logo.png" alt="Telegram logo" style="height: 256px; width: 256px; object-fit: contain;">
+
   <h2>HYPOXIA</h2>
   <p>
     <a href="#about">About</a>
@@ -10,7 +13,6 @@
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xinitd/hypoxia">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/xinitd/hypoxia">
-  <img alt="GitHub License" src="https://img.shields.io/github/license/xinitd/hypoxia">
 </div>
 
 <div align="center">
@@ -23,6 +25,8 @@
 <div align="center">
   <h3 align="center">About</h3>
 </div>
+
+<img src="assets/terminal.png" alt="Telegram logo">
 
 Hypoxia is an open-source forensic and backup creation tool, designed for security researchers and system administrators. This utility may be used for data analysis (metadata extraction), backup creation and file recovering.
 
@@ -57,22 +61,6 @@ Requirements:
 * Go to project folder `cd hypoxia`
 * Set executable flag: `chmod +x hypoxia.py`
 * Run `$(which python) hypoxia.py --help`
-
-```
-user@localhost:~$ ./hypoxia --help
-Hypoxia. Every byte will be found.
-
-options:
-  -h, --help            show this help message and exit
-  -v {silent,info}, --verbosity {silent,info}
-                        Set verbosity level for display additional information in runtime: "silent" - no any prints in terminal, "info" - print every action.
-  -s SEARCH_PATH, --search-path SEARCH_PATH
-                        Setting up searching path. The absolute or relative path to the directory to search in.
-  -e EXTENSIONS, --extensions EXTENSIONS
-                        File extensions to search for, separated by commas (e.g., "pdf,docx,txt").
-  -m {yes,no}, --keep-metadata {yes,no}
-                        Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).
-```
 
 #### Settings:
 
