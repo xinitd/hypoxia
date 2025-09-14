@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/logo.png" alt="Telegram logo" style="height: 256px; width: 256px; object-fit: contain;">
+  <img src="assets/logo.png" alt="Hypoxia logo" style="height: 256px; width: 256px; object-fit: contain;">
 
   <h2>HYPOXIA</h2>
   <p>
@@ -26,7 +26,7 @@
   <h3 align="center">About</h3>
 </div>
 
-<img src="assets/terminal.png" alt="Telegram logo">
+<img src="assets/terminal.png" alt="Terminal">
 
 Hypoxia is an open-source forensic and backup creation tool, designed for security researchers and system administrators. This utility may be used for data analysis (metadata extraction), backup creation and file recovering.
 
