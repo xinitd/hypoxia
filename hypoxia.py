@@ -19,7 +19,17 @@ def dir_path(path_string):
 def main():
     task_id = str(uuid.uuid4())
 
-    parser = argparse.ArgumentParser(description='Hypoxia. Every byte will be found.')
+    parser = argparse.ArgumentParser(
+        description='Hypoxia. Every byte will be found.',
+        epilog='''
+Parameters:
+    - HOW MUCH to report:   --verbosity
+    - WHERE to search:      --search-path
+    - WHAT to search for:   --extensions
+    - HOW to copy:          --keep-metadata (optional)
+    - WHEN to search:       --date-from / --date-to (optional)
+'''
+    )
 
     parser.add_argument(
         '-v', '--verbosity',
