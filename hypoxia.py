@@ -45,6 +45,18 @@ def main():
         default='no',
         help='Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).'
     )
+    parser.add_argument(
+        '--date-from',
+        type=str,
+        required=False,
+        help='Search for files modified on or after this date. Format: YYYY-MM-DD.'
+    )
+    parser.add_argument(
+        '--date-to',
+        type=str,
+        required=False,
+        help='Search for files modified on or before this date. Format: YYYY-MM-DD.'
+    )
 
     args = parser.parse_args()
 
