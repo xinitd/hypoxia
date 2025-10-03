@@ -2,6 +2,7 @@
 
 
 import argparse
+from argparse import RawTextHelpFormatter
 import sys
 import uuid
 from pathlib import Path
@@ -28,7 +29,8 @@ Parameters:
     - WHAT to search for:   --extensions
     - HOW to copy:          --keep-metadata (optional)
     - WHEN to search:       --date-from / --date-to (optional)
-'''
+''',
+    formatter_class=RawTextHelpFormatter
     )
 
     parser.add_argument(
