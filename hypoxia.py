@@ -87,7 +87,9 @@ Parameters:
 
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
-        copy_result = hypoxia_copy(task_id, target_extensions, verbosity, keep_metadata, args.search_path)
+        copy_result = collect_files(
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to 
+        )
 
     if verbosity:
         print('Hypoxia finished work. Bye!')

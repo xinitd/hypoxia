@@ -41,7 +41,7 @@ def parse_end_date(date_to_str=None):
         sys.exit(1)
 
 
-def hypoxia_copy(task_id, file_extensions, verbosity, keep_metadata, search_path):
+def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str):
     if verbosity:
         print(f'Started search at {search_path}')
 
@@ -49,10 +49,20 @@ def hypoxia_copy(task_id, file_extensions, verbosity, keep_metadata, search_path
 
     search_path_obj = Path(search_path)
 
+    start_date = parse_start_date(date_from_str)
+    end_date = parse_end_date(date_to_str)
+
     for file_extension in file_extensions:
         files_to_copy = search_path_obj.rglob(f'*.{file_extension}')
 
         for source_file in files_to_copy:
+            file_mtime = datetime.datetime.fromtimestamp(source_file.stat().st_mtime).date()
+
+            if start_date and file_mtime < start_date:
+                continue
+            if end_date and file_mtime > end_date:
+                continue
+
             try:
                 if verbosity:
                     print(f'Copying: {source_file}')
