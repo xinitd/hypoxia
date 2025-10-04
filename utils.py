@@ -1,4 +1,6 @@
+import sys
 import shutil
+import datetime
 from pathlib import Path
 
 
@@ -17,6 +19,26 @@ def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
         print('Environment ready.')
     return True
+
+
+def parse_start_date(date_from_str=None):
+    if not date_from_str:
+        return None
+    try:
+        return datetime.datetime.strptime(date_from_str, '%Y-%m-%d').date()
+    except ValueError:
+        print(f'Error: Incorrect date format for "{date_from_str}". Please use the YYYY-MM-DD format.')
+        sys.exit(1)
+
+
+def parse_end_date(date_to_str=None):
+    if not date_to_str:
+        return None
+    try:
+        return datetime.datetime.strptime(date_to_str, '%Y-%m-%d').date()
+    except ValueError:
+        print(f'Error: Incorrect date format for "{date_to_str}". Please use the YYYY-MM-DD format.')
+        sys.exit(1)
 
 
 def hypoxia_copy(task_id, file_extensions, verbosity, keep_metadata, search_path):
