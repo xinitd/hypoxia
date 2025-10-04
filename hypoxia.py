@@ -22,6 +22,7 @@ def dir_path(path_string):
 
 def main():
     task_id = str(uuid.uuid4())
+    result = False
 
     parser = argparse.ArgumentParser(
         description='Hypoxia. Every byte will be found.',
