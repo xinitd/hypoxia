@@ -63,7 +63,7 @@ Parameters:
     parser.add_argument(
         '-m', '--keep-metadata',
         choices=['yes', 'no'],
-        default='no',
+        default='yes',
         help='Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).'
     )
     parser.add_argument(
