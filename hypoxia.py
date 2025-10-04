@@ -9,6 +9,9 @@ from pathlib import Path
 from utils import *
 
 
+__version__ = '1.1.0'
+
+
 def dir_path(path_string):
     path_obj = Path(path_string)
     if path_obj.is_dir():
@@ -33,6 +36,11 @@ Parameters:
     formatter_class=RawTextHelpFormatter
     )
 
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'%(prog)s {__version__}'
+    )
     parser.add_argument(
         '-v', '--verbosity',
         choices=['silent', 'info'],
