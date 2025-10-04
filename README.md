@@ -8,7 +8,7 @@
     ·
     <a href="#usage">Usage</a>
     ·
-    <a href="#settings">Settings</a>
+    <a href="#options">Options</a>
   </p>
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xinitd/hypoxia">
@@ -28,7 +28,9 @@
 
 <img src="assets/terminal.png" alt="Terminal">
 
-Hypoxia is an open-source forensic and backup creation tool, designed for security researchers and system administrators. This utility may be used for data analysis (metadata extraction), backup creation and file recovering.
+Hypoxia is a powerful, cross-platform command-line tool for targeted file collection. Written in pure Python, it recursively searches directories to find and copy files based on a rich set of criteria, including file extension and modification date ranges.
+
+Designed for efficiency and portability, Hypoxia is an ideal utility for digital forensics specialists, system administrators, and security researchers who need to quickly gather digital evidence, create specific archives, or recover data from a mounted file system.
 
 Use cases:
 - Forensic;
@@ -36,13 +38,24 @@ Use cases:
 - Recovery files from PC with broken operating system.
 
 <div align="center">
-  <h3 align="center">Technical information</h3>
+    <h3 align="center">Features & Philosophy</h3>
 </div>
 
-Programming language: `Python`
+Hypoxia is built with a focus on simplicity, portability, and reliability.
 
-Requirements:
-* There is no need to install dependencies. They simply do not exist. Just install Python version `3.11` or newer for using as Python script.
+- **Lightweight & Portable:** Written in pure Python with no external dependencies. If you have Python 3.11+, it just works.
+
+- **Cross-Platform:** Runs seamlessly on Windows, macOS, and Linux.
+
+- **Powerful Filtering:** Collect files with precision by combining filters for:
+
+  - File extensions (e.g., `pdf`, `docx`, `jpg`).
+
+  - Modification date ranges (files created after, before, or within a specific period).
+
+- **Metadata Control:** Choose whether to preserve original file metadata (timestamps, permissions) or discard it for faster copy operations.
+
+- **Standard Library Only:** Built exclusively using Python's robust standard libraries (argparse, pathlib, datetime, shutil), ensuring maximum compatibility and security.
 
 <div align="center">
   <h3 align="center">Usage</h3>
@@ -50,21 +63,67 @@ Requirements:
 
 #### Standalone executable:
 
-* Download [latest release](https://github.com/xinitd/hypoxia/releases)
-* Set executable flag: `chmod +x hypoxia`
-* Run: `./hypoxia --help`
+- Download [latest release](https://github.com/xinitd/hypoxia/releases)
+
+- Set executable flag:
+
+  ```bash
+  chmod +x hypoxia
+  ```
+
+- Run:
+
+  ```bash
+  ./hypoxia --help
+  ```
 
 #### As Python script:
 
-* Install Python
-* Clone repo `git clone https://github.com/xinitd/hypoxia.git`
-* Go to project folder `cd hypoxia`
-* Set executable flag: `chmod +x hypoxia.py`
-* Run `$(which python) hypoxia.py --help`
+- Install Python
 
-#### Settings:
+- Clone repo:
+  ```bash
+  git clone https://github.com/xinitd/hypoxia.git
+  ```
 
-* `-v` or `--verbosity` - needs for print data about working of program. This parameter required and have two values: `silent` - no any prints in terminal, `info` - print every action and path of copying file.
-* `-s` or `--search-path` - set path where you want look up files. This argument required and have no default value.
-* `-e` or `--extensions` - put file extensions, which you want be found.
-* `-m` or `--keep-metadata` - metadata saving mode for collected files: `no` - copy files without metadata (faster), `yes` - attempts to keep all metadata.
+- Go to project folder:
+
+  ```bash
+  cd hypoxia
+  ```
+
+- Set executable flag:
+
+  ```bash
+  chmod +x hypoxia.py
+  ```
+
+- Run:
+
+  ```bash
+  $(which python) hypoxia.py --help
+  ```
+
+#### Usage example:
+
+This command will search the `/mnt/data` directory and all its subdirectories for `.jpg`, `.mp4`, and `.mov` files modified between January 1st and March 31st, 2025. It will preserve their metadata (`--keep-metadata` defaults to `yes`) and print every action to the terminal:
+
+```bash
+python hypoxia.py -v info -s "/mnt/data" -e "jpg,mp4,mov" --date-from "2025-01-01" --date-to "2025-03-31"
+```
+
+<div align="center">
+  <h3 align="center">Options</h3>
+</div>
+
+All command-line arguments that can be used to control the behavior of Hypoxia are listed below:
+
+| Option | Description | Required | Default |
+| --- | --- | --- | --- |
+| `--version` | Displays the current version of Hypoxia and exits. | No | - |
+| `-v`, `--verbosity` | Sets the verbosity level. `silent` provides no output, while `info` logs every action to the terminal. | Yes | - |
+| `-s`, `--search-path` | The absolute or relative path to the directory to search recursively. | Yes | - |
+| `-e`, `--extensions` | A comma-separated list of file extensions to search for (e.g., `pdf`, `docx`, `txt`). Do not include dots. | Yes |  |
+| `-m`, `--keep-metadata` | Defines if file metadata (timestamps, permissions) should be preserved. | No | `yes` |
+| `--date-from` | Filters for files modified on or after this date. Format: `YYYY-MM-DD`. | No | - |
+| `--date-to` | Filters for files modified on or before this date. Format: `YYYY-MM-DD`. | No | - |
