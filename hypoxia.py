@@ -29,12 +29,12 @@ def main():
         description='Hypoxia. Every byte will be found.',
         epilog='''
 Parameters:
-    - HOW MUCH to report:   --verbosity
-    - WHERE to search:      --search-path
-    - WHAT to search for:   --extensions
-    - HOW to copy:          --keep-metadata (optional)
-    - WHEN to search:       --date-from / --date-to (optional)
-    - HOW BIG to search:    --size-min / --size-max (optional)
+  - HOW MUCH to report:   --verbosity
+  - WHERE to search:      --search-path
+  - WHAT to search for:   --extensions
+  - HOW to copy:          --keep-metadata (optional)
+  - WHEN to search:       --date-from / --date-to (optional)
+  - HOW BIG to search:    --size-min / --size-max (optional)
 ''',
     formatter_class=RawTextHelpFormatter
     )
