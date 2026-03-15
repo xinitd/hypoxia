@@ -2,11 +2,14 @@ import sys
 import shutil
 import datetime
 from pathlib import Path
-from colors import info, success, error
+from colors import info, success, warning, error
 
 
 WORKSPACE = Path.cwd()
 workdir = 'data'
+
+WARNING_FREE_SPACE  = 500 * 1024 * 1024
+CRITICAL_FREE_SPACE = 50  * 1024 * 1024
 
 
 def prepare_workspace(task_id, file_extensions, verbosity):
@@ -74,10 +77,22 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
     size_min = parse_size(size_min_str)
     size_max = parse_size(size_max_str)
 
+    low_space_warned = False
+
     for file_extension in file_extensions:
         files_to_copy = search_path_obj.rglob(f'*.{file_extension}')
 
         for source_file in files_to_copy:
+            free_space = shutil.disk_usage(WORKSPACE).free
+
+            if free_space < CRITICAL_FREE_SPACE:
+                error(f'Critical: out of disk space ({free_space // (1024 * 1024)}MB left). Stopping.')
+                return False
+
+            if free_space < WARNING_FREE_SPACE and not low_space_warned:
+                warning(f'Low disk space: {free_space // (1024 * 1024)}MB remaining.')
+                low_space_warned = True
+
             file_stat = source_file.stat()
             file_mtime = datetime.datetime.fromtimestamp(file_stat.st_mtime).date()
             file_size = file_stat.st_size
