@@ -34,6 +34,7 @@ Parameters:
     - WHAT to search for:   --extensions
     - HOW to copy:          --keep-metadata (optional)
     - WHEN to search:       --date-from / --date-to (optional)
+    - HOW BIG to search:    --size-min / --size-max (optional)
 ''',
     formatter_class=RawTextHelpFormatter
     )
@@ -79,6 +80,18 @@ Parameters:
         required=False,
         help='Search for files modified on or before this date. Format: YYYY-MM-DD.'
     )
+    parser.add_argument(
+        '--size-min',
+        type=str,
+        required=False,
+        help='Search for files larger than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+    )
+    parser.add_argument(
+        '--size-max',
+        type=str,
+        required=False,
+        help='Search for files smaller than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+    )
 
     args = parser.parse_args()
 
@@ -98,7 +111,7 @@ Parameters:
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max
         )
 
     if result:
