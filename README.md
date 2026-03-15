@@ -28,7 +28,7 @@
 
 <img src="assets/terminal.png" alt="Terminal">
 
-Hypoxia is a powerful, cross-platform command-line tool for targeted file collection. Written in pure Python, it recursively searches directories to find and copy files based on a rich set of criteria, including file extension and modification date ranges.
+Hypoxia is a powerful, cross-platform command-line tool for targeted file collection. Written in pure Python, it recursively searches directories to find and copy files based on a rich set of criteria, including file extension, modification date ranges, and file size.
 
 Designed for efficiency and portability, Hypoxia is an ideal utility for digital forensics specialists, system administrators, and security researchers who need to quickly gather digital evidence, create specific archives, or recover data from a mounted file system.
 
@@ -51,11 +51,15 @@ Hypoxia is built with a focus on simplicity, portability, and reliability.
 
   - File extensions (e.g., `pdf`, `docx`, `jpg`).
 
-  - Modification date ranges (files created after, before, or within a specific period).
+  - Modification date ranges (files modified after, before, or within a specific period).
+
+  - File size ranges (e.g., only files larger than `10mb` or smaller than `2gb`).
+
+- **Disk Space Awareness:** Hypoxia monitors free space on the destination device in real time — warning you when space is running low and stopping automatically before the disk fills up completely.
 
 - **Metadata Control:** Choose whether to preserve original file metadata (timestamps, permissions) or discard it for faster copy operations.
 
-- **Standard Library Only:** Built exclusively using Python's robust standard libraries (argparse, pathlib, datetime, shutil), ensuring maximum compatibility and security.
+- **Standard Library Only:** Built exclusively using Python's robust standard libraries (`argparse`, `pathlib`, `datetime`, `shutil`), ensuring maximum compatibility and security.
 
 <div align="center">
   <h3 align="center">Usage</h3>
@@ -106,10 +110,10 @@ Hypoxia is built with a focus on simplicity, portability, and reliability.
 
 #### Usage example:
 
-This command will search the `/mnt/data` directory and all its subdirectories for `.jpg`, `.mp4`, and `.mov` files modified between January 1st and March 31st, 2025. It will preserve their metadata (`--keep-metadata` defaults to `yes`) and print every action to the terminal:
+This command will search the `/mnt/data` directory and all its subdirectories for `.jpg`, `.mp4`, and `.mov` files modified between January 1st and March 31st, 2025, with a file size between 1MB and 2GB. It will preserve their metadata (`--keep-metadata` defaults to `yes`) and print every action to the terminal:
 
 ```bash
-python hypoxia.py -v info -s "/mnt/data" -e "jpg,mp4,mov" --date-from "2025-01-01" --date-to "2025-03-31"
+python hypoxia.py -v info -s "/mnt/data" -e "jpg,mp4,mov" --date-from "2025-01-01" --date-to "2025-03-31" --size-min "1mb" --size-max "2gb"
 ```
 
 <div align="center">
@@ -127,3 +131,5 @@ All command-line arguments that can be used to control the behavior of Hypoxia a
 | `-m`, `--keep-metadata` | Defines if file metadata (timestamps, permissions) should be preserved. | No | `yes` |
 | `--date-from` | Filters for files modified on or after this date. Format: `YYYY-MM-DD`. | No | - |
 | `--date-to` | Filters for files modified on or before this date. Format: `YYYY-MM-DD`. | No | - |
+| `--size-min` | Filters for files larger than or equal to this size. Supported units: `b`, `kb`, `mb`, `gb` (e.g., `100mb`). | No | - |
+| `--size-max` | Filters for files smaller than or equal to this size. Supported units: `b`, `kb`, `mb`, `gb` (e.g., `2gb`). | No | - |

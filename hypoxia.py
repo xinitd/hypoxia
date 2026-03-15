@@ -7,9 +7,10 @@ import sys
 import uuid
 from pathlib import Path
 from utils import *
+from colors import info, error
 
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 
 def dir_path(path_string):
@@ -28,11 +29,12 @@ def main():
         description='Hypoxia. Every byte will be found.',
         epilog='''
 Parameters:
-    - HOW MUCH to report:   --verbosity
-    - WHERE to search:      --search-path
-    - WHAT to search for:   --extensions
-    - HOW to copy:          --keep-metadata (optional)
-    - WHEN to search:       --date-from / --date-to (optional)
+  - HOW MUCH to report:   --verbosity
+  - WHERE to search:      --search-path
+  - WHAT to search for:   --extensions
+  - HOW to copy:          --keep-metadata (optional)
+  - WHEN to search:       --date-from / --date-to (optional)
+  - HOW BIG to search:    --size-min / --size-max (optional)
 ''',
     formatter_class=RawTextHelpFormatter
     )
@@ -78,6 +80,18 @@ Parameters:
         required=False,
         help='Search for files modified on or before this date. Format: YYYY-MM-DD.'
     )
+    parser.add_argument(
+        '--size-min',
+        type=str,
+        required=False,
+        help='Search for files larger than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+    )
+    parser.add_argument(
+        '--size-max',
+        type=str,
+        required=False,
+        help='Search for files smaller than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+    )
 
     args = parser.parse_args()
 
@@ -87,22 +101,22 @@ Parameters:
     try:
         target_extensions = args.extensions.split(',')
     except Exception as e:
-        print('Wrong --extensions argument.')
+        error('Wrong --extensions argument.')
         sys.exit()
 
     if verbosity:
-        print('Starting Hypoxia...')
-        print(f'Setting up task: {task_id}')
+        info('Starting Hypoxia...')
+        info(f'Setting up task: {task_id}')
 
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to 
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max
         )
 
     if result:
         if verbosity:
-            print('Hypoxia successfully finished work. Bye!')
+            info('Hypoxia successfully finished work. Bye!')
 
 
 if __name__ == '__main__':
