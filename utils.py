@@ -2,6 +2,7 @@ import sys
 import shutil
 import datetime
 from pathlib import Path
+from colors import info, success, error
 
 
 WORKSPACE = Path.cwd()
@@ -10,14 +11,14 @@ workdir = 'data'
 
 def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
-        print('Preparing environment. Please wait...')
+        info('Preparing environment. Please wait...')
     (WORKSPACE / workdir).mkdir(exist_ok=True)
     (WORKSPACE / workdir / task_id).mkdir(exist_ok=True)
 
     for file_extension in file_extensions:
         (WORKSPACE / workdir / task_id / file_extension).mkdir(exist_ok=True)
     if verbosity:
-        print('Environment ready.')
+        success('Environment ready.')
     return True
 
 
@@ -27,7 +28,7 @@ def parse_start_date(date_from_str=None):
     try:
         return datetime.datetime.strptime(date_from_str, '%Y-%m-%d').date()
     except ValueError:
-        print(f'Error: Incorrect date format for "{date_from_str}". Please use the YYYY-MM-DD format.')
+        error(f'Incorrect date format for "{date_from_str}". Please use the YYYY-MM-DD format.')
         sys.exit(1)
 
 
@@ -37,13 +38,13 @@ def parse_end_date(date_to_str=None):
     try:
         return datetime.datetime.strptime(date_to_str, '%Y-%m-%d').date()
     except ValueError:
-        print(f'Error: Incorrect date format for "{date_to_str}". Please use the YYYY-MM-DD format.')
+        error(f'Incorrect date format for "{date_to_str}". Please use the YYYY-MM-DD format.')
         sys.exit(1)
 
 
 def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str):
     if verbosity:
-        print(f'Started search at {search_path}')
+        info(f'Started search at {search_path}')
 
     copy_function = shutil.copy2 if keep_metadata else shutil.copy
 
@@ -65,7 +66,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             try:
                 if verbosity:
-                    print(f'Copying: {source_file}')
+                    print(f'  copying: {source_file}')
 
                 destination_file = WORKSPACE / workdir / task_id / file_extension / source_file.name
 
@@ -73,9 +74,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             except (IOError, OSError) as e:
                 if verbosity:
-                    print(f'Error copying file {source_file}: {e}')
+                    error(f'Error copying file {source_file}: {e}')
 
     if verbosity:
-        print('Copying done.')
+        success('Copying done.')
 
     return True

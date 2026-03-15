@@ -7,6 +7,7 @@ import sys
 import uuid
 from pathlib import Path
 from utils import *
+from colors import info, error
 
 
 __version__ = '1.2.0'
@@ -87,22 +88,22 @@ Parameters:
     try:
         target_extensions = args.extensions.split(',')
     except Exception as e:
-        print('Wrong --extensions argument.')
+        error('Wrong --extensions argument.')
         sys.exit()
 
     if verbosity:
-        print('Starting Hypoxia...')
-        print(f'Setting up task: {task_id}')
+        info('Starting Hypoxia...')
+        info(f'Setting up task: {task_id}')
 
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to 
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to
         )
 
     if result:
         if verbosity:
-            print('Hypoxia successfully finished work. Bye!')
+            info('Hypoxia successfully finished work. Bye!')
 
 
 if __name__ == '__main__':
