@@ -14,14 +14,14 @@ CRITICAL_FREE_SPACE = 50  * 1024 * 1024
 
 def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
-        info('Preparing environment. Please wait...')
+        info('Initializing workspace...')
     (WORKSPACE / workdir).mkdir(exist_ok=True)
     (WORKSPACE / workdir / task_id).mkdir(exist_ok=True)
 
     for file_extension in file_extensions:
         (WORKSPACE / workdir / task_id / file_extension).mkdir(exist_ok=True)
     if verbosity:
-        success('Environment ready.')
+        success('Workspace initialized.')
     return True
 
 
@@ -40,7 +40,7 @@ def parse_size(size_str=None):
     try:
         return int(normalized)
     except ValueError:
-        error(f'Invalid size format: "{size_str}". Use formats like: 500b, 10kb, 100mb, 2gb.')
+        error(f'Invalid size format: "{size_str}". Supported formats: 500b, 10kb, 100mb, 2gb.')
         sys.exit(1)
 
 
@@ -50,7 +50,7 @@ def parse_start_date(date_from_str=None):
     try:
         return datetime.datetime.strptime(date_from_str, '%Y-%m-%d').date()
     except ValueError:
-        error(f'Incorrect date format for "{date_from_str}". Please use the YYYY-MM-DD format.')
+        error(f'Invalid date format: "{date_from_str}". Expected format: YYYY-MM-DD.')
         sys.exit(1)
 
 
@@ -60,13 +60,13 @@ def parse_end_date(date_to_str=None):
     try:
         return datetime.datetime.strptime(date_to_str, '%Y-%m-%d').date()
     except ValueError:
-        error(f'Incorrect date format for "{date_to_str}". Please use the YYYY-MM-DD format.')
+        error(f'Invalid date format: "{date_to_str}". Expected format: YYYY-MM-DD.')
         sys.exit(1)
 
 
 def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str):
     if verbosity:
-        info(f'Started search at {search_path}')
+        info(f'Scanning directory: {search_path}')
 
     copy_function = shutil.copy2 if keep_metadata else shutil.copy
 
@@ -86,11 +86,11 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             free_space = shutil.disk_usage(WORKSPACE).free
 
             if free_space < CRITICAL_FREE_SPACE:
-                error(f'Critical: out of disk space ({free_space // (1024 * 1024)}MB left). Stopping.')
+                error(f'CRITICAL: Insufficient disk space ({free_space // (1024 * 1024)}MB remaining). Halting execution.')
                 return False
 
             if free_space < WARNING_FREE_SPACE and not low_space_warned:
-                warning(f'Low disk space: {free_space // (1024 * 1024)}MB remaining.')
+                warning(f'WARNING: Low disk space ({free_space // (1024 * 1024)}MB remaining).')
                 low_space_warned = True
 
             file_stat = source_file.stat()
@@ -108,7 +108,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             try:
                 if verbosity:
-                    print(f'  copying: {source_file}')
+                    print(f' Copying: {source_file}')
 
                 destination_file = WORKSPACE / workdir / task_id / file_extension / source_file.name
 
@@ -116,9 +116,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             except (IOError, OSError) as e:
                 if verbosity:
-                    error(f'Error copying file {source_file}: {e}')
+                    error(f'Failed to copy {source_file}: {e}')
 
     if verbosity:
-        success('Copying done.')
+        success('File collection complete.')
 
     return True

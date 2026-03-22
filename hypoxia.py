@@ -18,7 +18,7 @@ def dir_path(path_string):
     if path_obj.is_dir():
         return path_obj
     else:
-        raise argparse.ArgumentTypeError(f'"{path_string}" is not a valid directory.')
+        raise argparse.ArgumentTypeError(f'Directory not found or access denied: "{path_string}"')
 
 
 def main():
@@ -26,17 +26,17 @@ def main():
     result = False
 
     parser = argparse.ArgumentParser(
-        description='Hypoxia. Every byte will be found.',
+        description='Hypoxia: Targeted file extraction and backup utility.',
         epilog='''
-Parameters:
-  - HOW MUCH to report:   --verbosity
-  - WHERE to search:      --search-path
-  - WHAT to search for:   --extensions
-  - HOW to copy:          --keep-metadata (optional)
-  - WHEN to search:       --date-from / --date-to (optional)
-  - HOW BIG to search:    --size-min / --size-max (optional)
+Options Summary:
+  Logging level:        -v, --verbosity
+  Target location:      -s, --search-path
+  Target files:         -e, --extensions
+  Copy behavior:        -m, --keep-metadata
+  Timeframe filters:    --date-from, --date-to
+  Size limits:          --size-min, --size-max
 ''',
-    formatter_class=RawTextHelpFormatter
+        formatter_class=RawTextHelpFormatter
     )
 
     parser.add_argument(
@@ -48,49 +48,49 @@ Parameters:
         '-v', '--verbosity',
         choices=['silent', 'info'],
         required=True,
-        help='Set verbosity level for display additional information in runtime: "silent" - no any prints in terminal, "info" - print every action.'
+        help='Set logging level. "silent" suppresses output, "info" logs all actions.'
     )
     parser.add_argument(
         '-s', '--search-path',
         type=dir_path,
         required=True,
-        help='Setting up searching path. The absolute or relative path to the directory to search in.'
+        help='Absolute or relative path to the target directory.'
     )
     parser.add_argument(
         '-e', '--extensions',
         type=str,
         required=True,
-        help='File extensions to search for, separated by commas (e.g., "pdf,docx,txt").'
+        help='Comma-separated list of target file extensions (e.g., pdf,docx,txt).'
     )
     parser.add_argument(
         '-m', '--keep-metadata',
         choices=['yes', 'no'],
         default='yes',
-        help='Defines if file metadata should be preserved. "yes" keeps it, "no" discards it (faster).'
+        help='Preserve original file metadata (timestamps, permissions). "no" speeds up copying.'
     )
     parser.add_argument(
         '--date-from',
         type=str,
         required=False,
-        help='Search for files modified on or after this date. Format: YYYY-MM-DD.'
+        help='Filter for files modified on or after this date (YYYY-MM-DD).'
     )
     parser.add_argument(
         '--date-to',
         type=str,
         required=False,
-        help='Search for files modified on or before this date. Format: YYYY-MM-DD.'
+        help='Filter for files modified on or before this date (YYYY-MM-DD).'
     )
     parser.add_argument(
         '--size-min',
         type=str,
         required=False,
-        help='Search for files larger than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+        help='Minimum file size boundary (e.g., 10kb, 100mb, 2gb).'
     )
     parser.add_argument(
         '--size-max',
         type=str,
         required=False,
-        help='Search for files smaller than or equal to this size (e.g., 500b, 10kb, 100mb, 2gb).'
+        help='Maximum file size boundary (e.g., 10kb, 100mb, 2gb).'
     )
 
     args = parser.parse_args()
@@ -101,12 +101,12 @@ Parameters:
     try:
         target_extensions = args.extensions.split(',')
     except Exception as e:
-        error('Wrong --extensions argument.')
+        error('Invalid --extensions format. Expected a comma-separated list.')
         sys.exit()
 
     if verbosity:
-        info('Starting Hypoxia...')
-        info(f'Setting up task: {task_id}')
+        info('Initializing Hypoxia...')
+        info(f'Task ID: {task_id}')
 
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
@@ -116,7 +116,7 @@ Parameters:
 
     if result:
         if verbosity:
-            info('Hypoxia successfully finished work. Bye!')
+            info('Extraction task completed successfully.')
 
 
 if __name__ == '__main__':
