@@ -78,7 +78,7 @@ cd hypoxia
 
 ```bash
 chmod +x hypoxia.py
-python3 hypoxia.py --help
+./hypoxia.py --help
 ```
 
 #### Quick Example:
