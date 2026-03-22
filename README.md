@@ -22,7 +22,7 @@
 
 <img src="assets/terminal.png" alt="Terminal">
 
-**Hypoxia** is a lightweight, dependency-free, cross-platform command-line tool designed for targeted file extraction and backup. Written entirely in standard Python, it recursively searches directories and collects files based on a granular set of criteria—including extensions, modification dates, and file sizes.
+**Hypoxia** is a lightweight, dependency-free, cross-platform command-line tool designed for targeted file extraction and backup. Written entirely in standard Python, it recursively searches directories and collects files based on a granular set of criteria-including extensions, modification dates, and file sizes.
 
 Built for efficiency and portability, Hypoxia is the perfect utility for digital forensics specialists, system administrators, and security researchers who need to rapidly gather digital evidence, construct specific archives, or recover data from mounted, unbootable filesystems.
 
@@ -88,7 +88,7 @@ Search the `/mnt/data` directory and all its subdirectories for `.jpg`, `.mp4`, 
 This command preserves metadata by default and outputs detailed logs to the terminal:
 
 ```bash
-./hypoxia.py -v info -s "/mnt/data" -e "jpg,mp4,mov" --date-from "2025-01-01" --date-to "2025-03-31" --size-min "1mb" --size-max "2gb"
+./hypoxia -v info -s "/mnt/data" -e "jpg,mp4,mov" --date-from "2025-01-01" --date-to "2025-03-31" --size-min "1mb" --size-max "2gb"
 ```
 
 <div align="center">
