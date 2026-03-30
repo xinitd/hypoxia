@@ -6,7 +6,7 @@ from colors import info, success, warning, error
 
 
 WORKSPACE = Path.cwd()
-workdir = 'data'
+WORKDIR = 'data'
 
 WARNING_FREE_SPACE  = 500 * 1024 * 1024
 CRITICAL_FREE_SPACE = 50  * 1024 * 1024
@@ -15,11 +15,11 @@ CRITICAL_FREE_SPACE = 50  * 1024 * 1024
 def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
         info('Initializing workspace...')
-    (WORKSPACE / workdir).mkdir(exist_ok=True)
-    (WORKSPACE / workdir / task_id).mkdir(exist_ok=True)
+    (WORKSPACE / WORKDIR).mkdir(exist_ok=True)
+    (WORKSPACE / WORKDIR / task_id).mkdir(exist_ok=True)
 
     for file_extension in file_extensions:
-        (WORKSPACE / workdir / task_id / file_extension).mkdir(exist_ok=True)
+        (WORKSPACE / WORKDIR / task_id / file_extension).mkdir(exist_ok=True)
     if verbosity:
         success('Workspace initialized.')
     return True
@@ -110,7 +110,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                 if verbosity:
                     print(f' Copying: {source_file}')
 
-                destination_file = WORKSPACE / workdir / task_id / file_extension / source_file.name
+                destination_file = WORKSPACE / WORKDIR / task_id / file_extension / source_file.name
 
                 copy_function(source_file, destination_file)
 
