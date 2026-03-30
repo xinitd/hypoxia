@@ -69,6 +69,10 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     low_space_warned = False
 
+    files_copied = 0
+    files_skipped = 0
+    total_bytes = 0
+
     for file_extension in file_extensions:
         files_to_copy = search_path_obj.rglob(f'*.{file_extension}')
 
@@ -88,12 +92,16 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             file_size = file_stat.st_size
 
             if start_date and file_mtime < start_date:
+                files_skipped += 1
                 continue
             if end_date and file_mtime > end_date:
+                files_skipped += 1
                 continue
             if size_min and file_size < size_min:
+                files_skipped += 1
                 continue
             if size_max and file_size > size_max:
+                files_skipped += 1
                 continue
 
             try:
@@ -114,11 +122,22 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
                 copy_function(source_file, destination_file)
 
+                files_copied += 1
+                total_bytes += file_size
+
             except (IOError, OSError) as e:
                 if verbosity:
                     error(f'Failed to copy {source_file}: {e}')
 
     if verbosity:
         success('File collection complete.')
+        info(f'Files copied: {files_copied}')
+        info(f'Files skipped: {files_skipped}')
+        if total_bytes < 1024 * 1024:
+            info(f'Total size: {total_bytes / 1024:.1f} KB')
+        elif total_bytes < 1024 * 1024 * 1024:
+            info(f'Total size: {total_bytes / (1024 * 1024):.1f} MB')
+        else:
+            info(f'Total size: {total_bytes / (1024 * 1024 * 1024):.2f} GB')
 
     return True
