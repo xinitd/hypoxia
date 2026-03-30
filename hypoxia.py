@@ -102,7 +102,7 @@ Options Summary:
         target_extensions = args.extensions.split(',')
     except Exception as e:
         error('Invalid --extensions format. Expected a comma-separated list.')
-        sys.exit()
+        sys.exit(1)
 
     if verbosity:
         info('Initializing Hypoxia...')
