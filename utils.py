@@ -98,7 +98,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             try:
                 if verbosity:
-                    print(f' Copying: {source_file}')
+                    info(f'Copying: {source_file}')
 
                 destination_file = WORKSPACE / WORKDIR / task_id / file_extension / source_file.name
 
