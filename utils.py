@@ -6,7 +6,7 @@ from colors import info, success, warning, error
 
 
 WORKSPACE = Path.cwd()
-workdir = 'data'
+WORKDIR = 'data'
 
 WARNING_FREE_SPACE  = 500 * 1024 * 1024
 CRITICAL_FREE_SPACE = 50  * 1024 * 1024
@@ -15,11 +15,11 @@ CRITICAL_FREE_SPACE = 50  * 1024 * 1024
 def prepare_workspace(task_id, file_extensions, verbosity):
     if verbosity:
         info('Initializing workspace...')
-    (WORKSPACE / workdir).mkdir(exist_ok=True)
-    (WORKSPACE / workdir / task_id).mkdir(exist_ok=True)
+    (WORKSPACE / WORKDIR).mkdir(exist_ok=True)
+    (WORKSPACE / WORKDIR / task_id).mkdir(exist_ok=True)
 
     for file_extension in file_extensions:
-        (WORKSPACE / workdir / task_id / file_extension).mkdir(exist_ok=True)
+        (WORKSPACE / WORKDIR / task_id / file_extension).mkdir(exist_ok=True)
     if verbosity:
         success('Workspace initialized.')
     return True
@@ -44,23 +44,13 @@ def parse_size(size_str=None):
         sys.exit(1)
 
 
-def parse_start_date(date_from_str=None):
-    if not date_from_str:
+def parse_date(date_str=None, label='date'):
+    if not date_str:
         return None
     try:
-        return datetime.datetime.strptime(date_from_str, '%Y-%m-%d').date()
+        return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
     except ValueError:
-        error(f'Invalid date format: "{date_from_str}". Expected format: YYYY-MM-DD.')
-        sys.exit(1)
-
-
-def parse_end_date(date_to_str=None):
-    if not date_to_str:
-        return None
-    try:
-        return datetime.datetime.strptime(date_to_str, '%Y-%m-%d').date()
-    except ValueError:
-        error(f'Invalid date format: "{date_to_str}". Expected format: YYYY-MM-DD.')
+        error(f'Invalid {label} format: "{date_str}". Expected format: YYYY-MM-DD.')
         sys.exit(1)
 
 
@@ -72,12 +62,16 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     search_path_obj = Path(search_path)
 
-    start_date = parse_start_date(date_from_str)
-    end_date = parse_end_date(date_to_str)
+    start_date = parse_date(date_from_str, label='--date-from')
+    end_date = parse_date(date_to_str, label='--date-to')
     size_min = parse_size(size_min_str)
     size_max = parse_size(size_max_str)
 
     low_space_warned = False
+
+    files_copied = 0
+    files_skipped = 0
+    total_bytes = 0
 
     for file_extension in file_extensions:
         files_to_copy = search_path_obj.rglob(f'*.{file_extension}')
@@ -98,21 +92,38 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             file_size = file_stat.st_size
 
             if start_date and file_mtime < start_date:
+                files_skipped += 1
                 continue
             if end_date and file_mtime > end_date:
+                files_skipped += 1
                 continue
             if size_min and file_size < size_min:
+                files_skipped += 1
                 continue
             if size_max and file_size > size_max:
+                files_skipped += 1
                 continue
 
             try:
                 if verbosity:
-                    print(f' Copying: {source_file}')
+                    info(f'Copying: {source_file}')
 
-                destination_file = WORKSPACE / workdir / task_id / file_extension / source_file.name
+                destination_file = WORKSPACE / WORKDIR / task_id / file_extension / source_file.name
+
+                if destination_file.exists():
+                    stem = source_file.stem
+                    suffix = source_file.suffix
+                    counter = 1
+                    while destination_file.exists():
+                        destination_file = WORKSPACE / WORKDIR / task_id / file_extension / f'{stem}_{counter}{suffix}'
+                        counter += 1
+                    if verbosity:
+                        warning(f'Name collision resolved: {source_file.name} -> {destination_file.name}')
 
                 copy_function(source_file, destination_file)
+
+                files_copied += 1
+                total_bytes += file_size
 
             except (IOError, OSError) as e:
                 if verbosity:
@@ -120,5 +131,13 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     if verbosity:
         success('File collection complete.')
+        info(f'Files copied: {files_copied}')
+        info(f'Files skipped: {files_skipped}')
+        if total_bytes < 1024 * 1024:
+            info(f'Total size: {total_bytes / 1024:.1f} KB')
+        elif total_bytes < 1024 * 1024 * 1024:
+            info(f'Total size: {total_bytes / (1024 * 1024):.1f} MB')
+        else:
+            info(f'Total size: {total_bytes / (1024 * 1024 * 1024):.2f} GB')
 
     return True
