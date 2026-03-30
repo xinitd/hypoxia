@@ -98,9 +98,19 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             try:
                 if verbosity:
-                    info(f' Copying: {source_file}')
+                    info(f'Copying: {source_file}')
 
                 destination_file = WORKSPACE / WORKDIR / task_id / file_extension / source_file.name
+
+                if destination_file.exists():
+                    stem = source_file.stem
+                    suffix = source_file.suffix
+                    counter = 1
+                    while destination_file.exists():
+                        destination_file = WORKSPACE / WORKDIR / task_id / file_extension / f'{stem}_{counter}{suffix}'
+                        counter += 1
+                    if verbosity:
+                        warning(f'Name collision resolved: {source_file.name} -> {destination_file.name}')
 
                 copy_function(source_file, destination_file)
 
