@@ -44,23 +44,13 @@ def parse_size(size_str=None):
         sys.exit(1)
 
 
-def parse_start_date(date_from_str=None):
-    if not date_from_str:
+def parse_date(date_str=None, label='date'):
+    if not date_str:
         return None
     try:
-        return datetime.datetime.strptime(date_from_str, '%Y-%m-%d').date()
+        return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
     except ValueError:
-        error(f'Invalid date format: "{date_from_str}". Expected format: YYYY-MM-DD.')
-        sys.exit(1)
-
-
-def parse_end_date(date_to_str=None):
-    if not date_to_str:
-        return None
-    try:
-        return datetime.datetime.strptime(date_to_str, '%Y-%m-%d').date()
-    except ValueError:
-        error(f'Invalid date format: "{date_to_str}". Expected format: YYYY-MM-DD.')
+        error(f'Invalid {label} format: "{date_str}". Expected format: YYYY-MM-DD.')
         sys.exit(1)
 
 
@@ -72,8 +62,8 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     search_path_obj = Path(search_path)
 
-    start_date = parse_start_date(date_from_str)
-    end_date = parse_end_date(date_to_str)
+    start_date = parse_date(date_from_str, label='--date-from')
+    end_date = parse_date(date_to_str, label='--date-to')
     size_min = parse_size(size_min_str)
     size_max = parse_size(size_max_str)
 
