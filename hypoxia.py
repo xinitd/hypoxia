@@ -10,7 +10,7 @@ from utils import *
 from colors import info, error
 
 
-__version__ = '1.2.2'
+__version__ = '1.3.0'
 
 
 def dir_path(path_string):
