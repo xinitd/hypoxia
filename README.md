@@ -11,6 +11,7 @@
     ·
     <a href="#command-line-options">Command-Line Options</a>
   </p>
+  <img alt="CI" src="https://github.com/xinitd/hypoxia/actions/workflows/ci.yml/badge.svg">
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xinitd/hypoxia">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/xinitd/hypoxia">
