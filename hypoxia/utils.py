@@ -2,7 +2,7 @@ import sys
 import shutil
 import datetime
 from pathlib import Path
-from colors import info, success, warning, error
+from hypoxia.colors import info, success, warning, error
 
 
 WORKSPACE = Path.cwd()
