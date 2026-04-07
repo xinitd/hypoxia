@@ -54,7 +54,7 @@ def parse_date(date_str=None, label='date'):
         sys.exit(1)
 
 
-def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str):
+def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str, exclude_dirs=None):
     if verbosity:
         info(f'Scanning directory: {search_path}')
 
@@ -66,6 +66,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
     end_date = parse_date(date_to_str, label='--date-to')
     size_min = parse_size(size_min_str)
     size_max = parse_size(size_max_str)
+
+    if exclude_dirs is None:
+        exclude_dirs = []
 
     low_space_warned = False
 
@@ -86,6 +89,12 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             if free_space < WARNING_FREE_SPACE and not low_space_warned:
                 warning(f'WARNING: Low disk space ({free_space // (1024 * 1024)}MB remaining).')
                 low_space_warned = True
+
+            if exclude_dirs:
+                file_parts = [p.lower() for p in source_file.parts]
+                if any(excluded in file_parts for excluded in exclude_dirs):
+                    files_skipped += 1
+                    continue
 
             file_stat = source_file.stat()
             file_mtime = datetime.datetime.fromtimestamp(file_stat.st_mtime).date()

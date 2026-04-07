@@ -87,6 +87,12 @@ Options Summary:
         required=False,
         help='Maximum file size boundary (e.g., 10kb, 100mb, 2gb).'
     )
+    parser.add_argument(
+        '--exclude',
+        type=str,
+        required=False,
+        help='Comma-separated list of directory names to exclude from scan (e.g., "windows,program files,.git").'
+    )
 
     args = parser.parse_args()
 
@@ -99,6 +105,8 @@ Options Summary:
         error('Invalid --extensions format. Expected a comma-separated list.')
         sys.exit(1)
 
+    exclude_dirs = [d.strip().lower() for d in args.exclude.split(',')] if args.exclude else []
+
     if verbosity:
         info('Initializing Hypoxia...')
         info(f'Task ID: {task_id}')
@@ -106,7 +114,7 @@ Options Summary:
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max, exclude_dirs
         )
 
     if result:
