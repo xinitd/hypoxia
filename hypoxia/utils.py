@@ -1,5 +1,6 @@
 import sys
 import shutil
+import zipfile
 import datetime
 from pathlib import Path
 from hypoxia.colors import info, success, warning, error
@@ -150,3 +151,28 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             info(f'Total size: {total_bytes / (1024 * 1024 * 1024):.2f} GB')
 
     return True
+
+
+def archive_output(task_id, verbosity):
+    task_dir = WORKSPACE / WORKDIR / task_id
+    archive_path = WORKSPACE / WORKDIR / f'{task_id}.zip'
+
+    if verbosity:
+        info(f'Creating archive: {archive_path.name}')
+
+    with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for file in task_dir.rglob('*'):
+            if file.is_file():
+                arcname = file.relative_to(task_dir)
+                zf.write(file, arcname)
+
+    if verbosity:
+        archive_size = archive_path.stat().st_size
+        if archive_size < 1024 * 1024:
+            success(f'Archive created: {archive_path.name} ({archive_size / 1024:.1f} KB)')
+        elif archive_size < 1024 * 1024 * 1024:
+            success(f'Archive created: {archive_path.name} ({archive_size / (1024 * 1024):.1f} MB)')
+        else:
+            success(f'Archive created: {archive_path.name} ({archive_size / (1024 * 1024 * 1024):.2f} GB)')
+
+    return archive_path

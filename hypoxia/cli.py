@@ -93,6 +93,12 @@ Options Summary:
         required=False,
         help='Comma-separated list of directory names to exclude from scan (e.g., "windows,program files,.git").'
     )
+    parser.add_argument(
+        '--zip',
+        action='store_true',
+        default=False,
+        help='Compress the output folder into a .zip archive after collection is complete.'
+    )
 
     args = parser.parse_args()
 
@@ -118,5 +124,7 @@ Options Summary:
         )
 
     if result:
+        if args.zip:
+            archive_path = archive_output(task_id, verbosity)
         if verbosity:
             info('Extraction task completed successfully.')
