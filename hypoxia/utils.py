@@ -4,6 +4,7 @@ import zipfile
 import datetime
 from pathlib import Path
 from hypoxia.colors import info, success, warning, error
+from hypoxia.forensic import compute_hash, create_manifest
 
 
 WORKSPACE = Path.cwd()
@@ -55,7 +56,7 @@ def parse_date(date_str=None, label='date'):
         sys.exit(1)
 
 
-def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str, exclude_dirs=None):
+def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str, exclude_dirs=None, hash_algorithm='sha256'):
     if verbosity:
         info(f'Scanning directory: {search_path}')
 
@@ -70,6 +71,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     if exclude_dirs is None:
         exclude_dirs = []
+
+    use_hashing = hash_algorithm and hash_algorithm != 'none'
+    manifest_entries = []
 
     low_space_warned = False
 
@@ -132,6 +136,19 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
                 copy_function(source_file, destination_file)
 
+                file_hash = None
+                if use_hashing:
+                    file_hash = compute_hash(destination_file, hash_algorithm)
+
+                manifest_entries.append({
+                    'original_path': str(source_file),
+                    'destination_path': str(destination_file),
+                    'file_size': file_size,
+                    'modified_at': file_mtime.isoformat(),
+                    'copied_at': datetime.datetime.now().isoformat(),
+                    'hash': file_hash
+                })
+
                 files_copied += 1
                 total_bytes += file_size
 
@@ -149,6 +166,12 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             info(f'Total size: {total_bytes / (1024 * 1024):.1f} MB')
         else:
             info(f'Total size: {total_bytes / (1024 * 1024 * 1024):.2f} GB')
+
+    manifest_path = WORKSPACE / WORKDIR / task_id / 'manifest.json'
+    manifest_file, manifest_checksum = create_manifest(manifest_entries, task_id, manifest_path, hash_algorithm if use_hashing else 'none')
+    if verbosity:
+        success(f'Forensic manifest saved: {manifest_path.name}')
+        info(f'Manifest checksum (SHA-256): {manifest_checksum}')
 
     return True
 

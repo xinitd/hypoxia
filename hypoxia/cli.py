@@ -99,6 +99,13 @@ Options Summary:
         default=False,
         help='Compress the output folder into a .zip archive after collection is complete.'
     )
+    parser.add_argument(
+        '--hash',
+        type=str,
+        choices=['sha256', 'sha512', 'md5', 'none'],
+        default='sha256',
+        help='Hash algorithm for forensic manifest (default: sha256). Use "none" to disable hashing.'
+    )
 
     args = parser.parse_args()
 
@@ -120,7 +127,7 @@ Options Summary:
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max, exclude_dirs
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max, exclude_dirs, args.hash
         )
 
     if result:
