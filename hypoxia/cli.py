@@ -123,11 +123,7 @@ Options Summary:
     verbosity = (args.verbosity == 'info')
     keep_metadata = (args.keep_metadata == 'yes')
 
-    try:
-        target_extensions = args.extensions.split(',')
-    except Exception as e:
-        error('Invalid --extensions format. Expected a comma-separated list.')
-        sys.exit(1)
+    target_extensions = [ext.strip() for ext in args.extensions.split(',')]
 
     exclude_dirs = [d.strip().lower() for d in args.exclude.split(',')] if args.exclude else []
 
