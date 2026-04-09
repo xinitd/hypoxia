@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/logo.png" alt="Hypoxia logo" style="height: 256px; width: 256px; object-fit: contain;">
+  <img src="assets/logo.png" alt="Hypoxia - open-source CLI forensic file extraction tool for Linux, macOS, and Windows" style="height: 256px; width: 256px; object-fit: contain;">
 
   <h2>HYPOXIA</h2>
 
@@ -11,6 +11,7 @@
     ·
     <a href="#command-line-options">Command-Line Options</a>
   </p>
+  <img alt="CI" src="https://github.com/xinitd/hypoxia/actions/workflows/ci.yml/badge.svg">
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/xinitd/hypoxia/total">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xinitd/hypoxia">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/xinitd/hypoxia">
@@ -20,7 +21,7 @@
   <h3 align="center">About</h3>
 </div>
 
-<img src="assets/terminal.png" alt="Terminal">
+<img src="assets/terminal.png" alt="Hypoxia CLI terminal output showing forensic file collection with SHA-256 hashing, directory exclusion, and checkpoint resume">
 
 **Hypoxia** is a lightweight, dependency-free, cross-platform command-line tool designed for targeted file extraction and backup. Written entirely in standard Python, it recursively searches directories and collects files based on a granular set of criteria - including extensions, modification dates, and file sizes.
 
@@ -38,14 +39,20 @@ Built for efficiency and portability, Hypoxia is the perfect utility for digital
   - **Size Boundaries:** e.g., files strictly between `10mb` and `2gb`.
 - **Disk Space Awareness:** Monitors free space on the destination drive in real time, issuing warnings and safely halting execution before the disk fills up completely.
 - **Metadata Control:** Choose to preserve original file metadata (timestamps, permissions) or discard it to maximize copy speed.
-- **Secure & Robust:** Relies exclusively on Python's standard library (`argparse`, `pathlib`, `datetime`, `shutil`), ensuring maximum compatibility and minimizing security risks.
+- **Forensic Manifest:** Automatically generates a JSON manifest for every collection task - SHA-256 hash, original path, destination path, file size, timestamps, and an overall manifest checksum for integrity verification.
+- **Chain of Custody Log:** Append-only forensic log with timestamped entries for every action (file copied, skipped, errors), establishing a verifiable chain of custody.
+- **Checkpoint/Resume:** If a collection is interrupted (crash, power loss, dying media), feed the forensic log back with `--resume` - Hypoxia continues from exactly where it stopped, verified by path and hash. No wasted time, no duplicates.
+- **Archive Output:** Compress the entire collection into a `.zip` archive with a single flag.
+- **Directory Exclusion:** Skip unwanted directories by name (e.g., system folders, `.git`).
+- **Secure & Robust:** Relies exclusively on Python's standard library (`argparse`, `pathlib`, `datetime`, `shutil`, `hashlib`, `json`, `zipfile`), ensuring maximum compatibility and minimizing security risks.
 
 <div align="center">
     <h3 align="center">Use Cases</h3>
 </div>
 
-- **Digital Forensics:** Rapid evidence gathering and metadata extraction.
-- **Data Backup:** Targeted backups of specific file types or recent documents.
+- **Digital Forensics:** Rapid evidence gathering with SHA-256 hashing, forensic manifest, and chain-of-custody logging.
+- **Incident Response:** Collect files from a compromised machine with a single command. Resume interrupted collections from dying media without re-copying.
+- **Data Backup:** Targeted backups of specific file types or recent documents, with integrity verification built in.
 - **Disaster Recovery:** Extracting files from corrupted or unbootable operating systems.
 
 <div align="center">
@@ -106,6 +113,10 @@ This command preserves metadata by default and outputs detailed logs to the term
 | `--date-to` | Filter for files modified on or before this date (`YYYY-MM-DD`). | No | - |
 | `--size-min` | Minimum file size (e.g., `100mb`). Supported units: `b`, `kb`, `mb`, `gb`. | No | - |
 | `--size-max` | Maximum file size (e.g., `2gb`). Supported units: `b`, `kb`, `mb`, `gb`. | No | - |
+| `--exclude` | Comma-separated list of directory names to exclude from scan (e.g., `windows,program files,.git`). | No | - |
+| `--zip` | Compress the output folder into a `.zip` archive after collection. | No | `false` |
+| `--hash` | Hash algorithm for forensic manifest (`sha256`, `none`). | No | `sha256` |
+| `--resume` | Path to a forensic log from a previous interrupted run. Resumes from where it stopped. | No | - |
 
 <div align="center">
   <h3 align="center">Legal Disclaimer</h3>
