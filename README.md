@@ -39,9 +39,9 @@ Built for efficiency and portability, Hypoxia is the perfect utility for digital
   - **Size Boundaries:** e.g., files strictly between `10mb` and `2gb`.
 - **Disk Space Awareness:** Monitors free space on the destination drive in real time, issuing warnings and safely halting execution before the disk fills up completely.
 - **Metadata Control:** Choose to preserve original file metadata (timestamps, permissions) or discard it to maximize copy speed.
-- **Forensic Manifest:** Automatically generates a JSON manifest for every collection task — SHA-256 hash, original path, destination path, file size, timestamps, and an overall manifest checksum for integrity verification.
+- **Forensic Manifest:** Automatically generates a JSON manifest for every collection task - SHA-256 hash, original path, destination path, file size, timestamps, and an overall manifest checksum for integrity verification.
 - **Chain of Custody Log:** Append-only forensic log with timestamped entries for every action (file copied, skipped, errors), establishing a verifiable chain of custody.
-- **Checkpoint/Resume:** If a collection is interrupted (crash, power loss, dying media), feed the forensic log back with `--resume` — Hypoxia continues from exactly where it stopped, verified by path and hash. No wasted time, no duplicates.
+- **Checkpoint/Resume:** If a collection is interrupted (crash, power loss, dying media), feed the forensic log back with `--resume` - Hypoxia continues from exactly where it stopped, verified by path and hash. No wasted time, no duplicates.
 - **Archive Output:** Compress the entire collection into a `.zip` archive with a single flag.
 - **Directory Exclusion:** Skip unwanted directories by name (e.g., system folders, `.git`).
 - **Secure & Robust:** Relies exclusively on Python's standard library (`argparse`, `pathlib`, `datetime`, `shutil`, `hashlib`, `json`, `zipfile`), ensuring maximum compatibility and minimizing security risks.
