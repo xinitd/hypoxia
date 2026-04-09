@@ -57,15 +57,16 @@ def parse_resume_log(log_path, verify_hashes=True):
                 source = message[:arrow_pos]
                 destination = message[arrow_pos + 4:]
 
+                resolved_source = str(Path(source).resolve())
+
                 if verify_hashes and hash_value:
                     dest_path = Path(destination)
                     if dest_path.exists():
                         actual_hash = compute_hash(dest_path, 'sha256')
                         if actual_hash == hash_value:
-                            completed_files[source] = hash_value
-                    # if file missing or hash mismatch — don't add, will be re-copied
+                            completed_files[resolved_source] = hash_value
                 else:
-                    completed_files[source] = hash_value
+                    completed_files[resolved_source] = hash_value
 
     return completed_files
 
