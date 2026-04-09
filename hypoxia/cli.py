@@ -31,6 +31,10 @@ Options Summary:
   Copy behavior:        -m, --keep-metadata
   Timeframe filters:    --date-from, --date-to
   Size limits:          --size-min, --size-max
+  Directory exclusion:  --exclude
+  Archive output:       --zip
+  Hashing:              --hash
+  Resume:               --resume
 ''',
         formatter_class=RawTextHelpFormatter
     )
