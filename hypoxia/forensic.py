@@ -76,6 +76,16 @@ class ForensicLog:
         self.f = open(log_path, 'a')
         self._write('SESSION_START', f'Forensic log initialized: {log_path.name}')
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self.f.closed:
+            if exc_type is not None:
+                self._write('SESSION_ABORT', f'{exc_type.__name__}: {exc_val}')
+            self.f.close()
+        return False
+
     def _write(self, event_type, message):
         timestamp = datetime.datetime.now().isoformat()
         self.f.write(f'{timestamp}\t{event_type}\t{message}\n')
