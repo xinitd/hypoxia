@@ -115,7 +115,7 @@ This command preserves metadata by default and outputs detailed logs to the term
 | `--size-max` | Maximum file size (e.g., `2gb`). Supported units: `b`, `kb`, `mb`, `gb`. | No | - |
 | `--exclude` | Comma-separated list of directory names to exclude from scan (e.g., `windows,program files,.git`). | No | - |
 | `--zip` | Compress the output folder into a `.zip` archive after collection. | No | `false` |
-| `--hash` | Hash algorithm for forensic manifest (`sha256`, `sha512`, `md5`, `none`). | No | `sha256` |
+| `--hash` | Hash algorithm for forensic manifest (`sha256`, `none`). | No | `sha256` |
 | `--resume` | Path to a forensic log from a previous interrupted run. Resumes from where it stopped. | No | - |
 
 <div align="center">
