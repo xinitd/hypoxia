@@ -4,7 +4,7 @@ import zipfile
 import datetime
 from pathlib import Path
 from hypoxia.colors import info, success, warning, error
-from hypoxia.forensic import compute_hash, create_manifest
+from hypoxia.forensic import compute_hash, create_manifest, ForensicLog
 
 
 WORKSPACE = Path.cwd()
@@ -75,6 +75,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
     use_hashing = hash_algorithm and hash_algorithm != 'none'
     manifest_entries = []
 
+    log_path = WORKSPACE / WORKDIR / task_id / 'forensic.log'
+    forensic_log = ForensicLog(log_path)
+
     low_space_warned = False
 
     files_copied = 0
@@ -99,6 +102,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                 file_parts = [p.lower() for p in source_file.parts]
                 if any(excluded in file_parts for excluded in exclude_dirs):
                     files_skipped += 1
+                    forensic_log.file_skipped(source_file, 'excluded directory')
                     continue
 
             file_stat = source_file.stat()
@@ -107,15 +111,19 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
             if start_date and file_mtime < start_date:
                 files_skipped += 1
+                forensic_log.file_skipped(source_file, 'before date range')
                 continue
             if end_date and file_mtime > end_date:
                 files_skipped += 1
+                forensic_log.file_skipped(source_file, 'after date range')
                 continue
             if size_min and file_size < size_min:
                 files_skipped += 1
+                forensic_log.file_skipped(source_file, 'below size minimum')
                 continue
             if size_max and file_size > size_max:
                 files_skipped += 1
+                forensic_log.file_skipped(source_file, 'above size maximum')
                 continue
 
             try:
@@ -149,12 +157,15 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                     'hash': file_hash
                 })
 
+                forensic_log.file_copied(source_file, destination_file, file_hash)
+
                 files_copied += 1
                 total_bytes += file_size
 
             except (IOError, OSError) as e:
                 if verbosity:
                     error(f'Failed to copy {source_file}: {e}')
+                forensic_log.file_error(source_file, str(e))
 
     if verbosity:
         success('File collection complete.')
@@ -166,6 +177,11 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
             info(f'Total size: {total_bytes / (1024 * 1024):.1f} MB')
         else:
             info(f'Total size: {total_bytes / (1024 * 1024 * 1024):.2f} GB')
+
+    forensic_log.complete(files_copied, files_skipped, total_bytes)
+
+    if verbosity:
+        success(f'Forensic log saved: {log_path.name}')
 
     manifest_path = WORKSPACE / WORKDIR / task_id / 'manifest.json'
     manifest_file, manifest_checksum = create_manifest(manifest_entries, task_id, manifest_path, hash_algorithm if use_hashing else 'none')

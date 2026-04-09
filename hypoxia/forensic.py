@@ -30,3 +30,35 @@ def create_manifest(manifest_entries, task_id, manifest_path, algorithm):
         json.dump(manifest, f, indent=2)
 
     return manifest_path, manifest_checksum
+
+
+class ForensicLog:
+    def __init__(self, log_path):
+        self.log_path = log_path
+        self.f = open(log_path, 'a')
+        self._write('SESSION_START', f'Forensic log initialized: {log_path.name}')
+
+    def _write(self, event_type, message):
+        timestamp = datetime.datetime.now().isoformat()
+        self.f.write(f'{timestamp}\t{event_type}\t{message}\n')
+        self.f.flush()
+
+    def file_copied(self, source, destination, file_hash=None):
+        msg = f'{source} -> {destination}'
+        if file_hash:
+            msg += f' [{file_hash}]'
+        self._write('FILE_COPIED', msg)
+
+    def file_skipped(self, source, reason):
+        self._write('FILE_SKIPPED', f'{source} ({reason})')
+
+    def file_error(self, source, error_msg):
+        self._write('FILE_ERROR', f'{source}: {error_msg}')
+
+    def warning(self, message):
+        self._write('WARNING', message)
+
+    def complete(self, files_copied, files_skipped, total_bytes):
+        self._write('SUMMARY', f'copied={files_copied} skipped={files_skipped} bytes={total_bytes}')
+        self._write('SESSION_END', 'Collection complete')
+        self.f.close()
