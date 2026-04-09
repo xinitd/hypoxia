@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/logo.png" alt="Hypoxia logo" style="height: 256px; width: 256px; object-fit: contain;">
+  <img src="assets/logo.png" alt="Hypoxia - open-source CLI forensic file extraction tool for Linux, macOS, and Windows" style="height: 256px; width: 256px; object-fit: contain;">
 
   <h2>HYPOXIA</h2>
 
@@ -21,7 +21,7 @@
   <h3 align="center">About</h3>
 </div>
 
-<img src="assets/terminal.png" alt="Terminal">
+<img src="assets/terminal.png" alt="Hypoxia CLI terminal output showing forensic file collection with SHA-256 hashing, directory exclusion, and checkpoint resume">
 
 **Hypoxia** is a lightweight, dependency-free, cross-platform command-line tool designed for targeted file extraction and backup. Written entirely in standard Python, it recursively searches directories and collects files based on a granular set of criteria - including extensions, modification dates, and file sizes.
 
