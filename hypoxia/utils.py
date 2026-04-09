@@ -108,7 +108,7 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                         forensic_log.file_skipped(source_file, 'excluded directory')
                         continue
 
-                if str(source_file) in resumed_files:
+                if str(source_file.resolve()) in resumed_files:
                     files_skipped += 1
                     forensic_log.file_skipped(source_file, 'already completed (resume)')
                     continue
