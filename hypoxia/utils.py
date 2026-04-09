@@ -113,9 +113,14 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                     forensic_log.file_skipped(source_file, 'already completed (resume)')
                     continue
 
-                file_stat = source_file.stat()
-                file_mtime = datetime.datetime.fromtimestamp(file_stat.st_mtime).date()
-                file_size = file_stat.st_size
+                try:
+                    file_stat = source_file.stat()
+                    file_mtime = datetime.datetime.fromtimestamp(file_stat.st_mtime).date()
+                    file_size = file_stat.st_size
+                except OSError as e:
+                    files_skipped += 1
+                    forensic_log.file_error(source_file, f'failed to read file attributes: {e}')
+                    continue
 
                 if start_date and file_mtime < start_date:
                     files_skipped += 1
