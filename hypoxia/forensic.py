@@ -32,6 +32,44 @@ def create_manifest(manifest_entries, task_id, manifest_path, algorithm):
     return manifest_path, manifest_checksum
 
 
+def parse_resume_log(log_path, verify_hashes=True):
+    completed_files = {}
+    
+    with open(log_path, 'r') as f:
+        for line in f:
+            parts = line.strip().split('\t', 2)
+            if len(parts) < 3:
+                continue
+            event_type = parts[1]
+            message = parts[2]
+
+            if event_type == 'FILE_COPIED':
+                hash_value = None
+                if ' [' in message and message.endswith(']'):
+                    hash_start = message.rfind(' [')
+                    hash_value = message[hash_start + 2:-1]
+                    message = message[:hash_start]
+
+                arrow_pos = message.find(' -> ')
+                if arrow_pos == -1:
+                    continue
+
+                source = message[:arrow_pos]
+                destination = message[arrow_pos + 4:]
+
+                if verify_hashes and hash_value:
+                    dest_path = Path(destination)
+                    if dest_path.exists():
+                        actual_hash = compute_hash(dest_path, 'sha256')
+                        if actual_hash == hash_value:
+                            completed_files[source] = hash_value
+                    # if file missing or hash mismatch — don't add, will be re-copied
+                else:
+                    completed_files[source] = hash_value
+
+    return completed_files
+
+
 class ForensicLog:
     def __init__(self, log_path):
         self.log_path = log_path

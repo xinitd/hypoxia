@@ -3,9 +3,10 @@ from argparse import RawTextHelpFormatter
 import sys
 import uuid
 from pathlib import Path
+from hypoxia import __version__
 from hypoxia.utils import *
 from hypoxia.colors import info, error
-from hypoxia import __version__
+from hypoxia.forensic import parse_resume_log
 
 
 def dir_path(path_string):
@@ -106,6 +107,12 @@ Options Summary:
         default='sha256',
         help='Hash algorithm for forensic manifest (default: sha256). Use "none" to disable hashing.'
     )
+    parser.add_argument(
+        '--resume',
+        type=str,
+        required=False,
+        help='Path to a forensic log file from a previous interrupted run. Resumes collection from where it stopped.'
+    )
 
     args = parser.parse_args()
 
@@ -120,6 +127,18 @@ Options Summary:
 
     exclude_dirs = [d.strip().lower() for d in args.exclude.split(',')] if args.exclude else []
 
+    resumed_files = {}
+    if args.resume:
+        resume_path = Path(args.resume)
+        if not resume_path.exists():
+            error(f'Resume log not found: "{args.resume}"')
+            sys.exit(1)
+        if verbosity:
+            info(f'Resuming from: {args.resume}')
+        resumed_files = parse_resume_log(resume_path)
+        if verbosity:
+            info(f'Previously completed files: {len(resumed_files)}')
+
     if verbosity:
         info('Initializing Hypoxia...')
         info(f'Task ID: {task_id}')
@@ -127,7 +146,7 @@ Options Summary:
     preparation_result = prepare_workspace(task_id, target_extensions, verbosity)
     if preparation_result:
         result = collect_files(
-            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max, exclude_dirs, args.hash
+            task_id, target_extensions, verbosity, keep_metadata, args.search_path, args.date_from, args.date_to, args.size_min, args.size_max, exclude_dirs, args.hash, resumed_files
         )
 
     if result:

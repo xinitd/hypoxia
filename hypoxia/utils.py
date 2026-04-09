@@ -56,7 +56,7 @@ def parse_date(date_str=None, label='date'):
         sys.exit(1)
 
 
-def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str, exclude_dirs=None, hash_algorithm='sha256'):
+def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_path, date_from_str, date_to_str, size_min_str, size_max_str, exclude_dirs=None, hash_algorithm='sha256', resumed_files=None):
     if verbosity:
         info(f'Scanning directory: {search_path}')
 
@@ -71,6 +71,9 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
 
     if exclude_dirs is None:
         exclude_dirs = []
+
+    if resumed_files is None:
+        resumed_files = {}
 
     use_hashing = hash_algorithm and hash_algorithm != 'none'
     manifest_entries = []
@@ -104,6 +107,11 @@ def collect_files(task_id, file_extensions, verbosity, keep_metadata, search_pat
                     files_skipped += 1
                     forensic_log.file_skipped(source_file, 'excluded directory')
                     continue
+
+            if str(source_file) in resumed_files:
+                files_skipped += 1
+                forensic_log.file_skipped(source_file, 'already completed (resume)')
+                continue
 
             file_stat = source_file.stat()
             file_mtime = datetime.datetime.fromtimestamp(file_stat.st_mtime).date()
