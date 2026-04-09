@@ -4,7 +4,7 @@ import sys
 import uuid
 from pathlib import Path
 from hypoxia import __version__
-from hypoxia.utils import *
+from hypoxia.utils import prepare_workspace, collect_files, archive_output
 from hypoxia.colors import info, error
 from hypoxia.forensic import parse_resume_log
 
